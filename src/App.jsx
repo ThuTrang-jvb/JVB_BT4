@@ -13,7 +13,7 @@ function App() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
-  const API_KEY = "f5ac4be4a19c47d8a3e42522222112"
+  const API_KEY = import.meta.env.VITE_WEATHER_API_KEY
   const BASE_URL = "http://api.weatherapi.com/v1/forecast.json"
 
   useEffect(() => {
