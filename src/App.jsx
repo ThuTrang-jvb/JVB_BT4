@@ -1,17 +1,20 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useRef, useEffect } from "react"
 import { CurrentWeatherDisplay } from "./components/CurrentWeatherDisplay"
 import { ForecastCard } from "./components/ForecastCard"
-import { WeatherChart } from "./components/WeatherChart"
+import WeatherChart from "./components/WeatherChart"
 import { mapConditionToIcon, formatDateTime } from "./lib/weather-utils" 
 import "./App.css" 
+
 
 function App() {
   const [city, setCity] = useState("Hanoi") 
   const [weather, setWeather] = useState(undefined)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [inputCity, setInputCity] = useState("Hanoi") 
+
 
   const API_KEY = import.meta.env.VITE_WEATHER_API_KEY
   const BASE_URL = "http://api.weatherapi.com/v1/forecast.json"
@@ -38,10 +41,26 @@ function App() {
           currentWindSpeed: data.current.wind_kph, 
         }
 
-        const chartData = data.forecast.forecastday[0].hour
-          .filter((_, index) => index % 3 === 0) 
-          .slice(0, 7) 
-          .map((hour) => ({ value: hour.temp_f }))
+        const nowHour = new Date().getHours()
+        const hours = data.forecast.forecastday[0].hour
+        const chartData = {
+          temp: hours.map((h) => ({
+            time: h.time,           
+            value: h.temp_f,
+          })),
+          uv: hours.map((h) => ({
+            time: h.time,           
+            value: h.uv,
+          })),
+          humidity: hours.map((h) => ({
+            time: h.time,
+            value: h.humidity,
+          })),
+        }
+
+
+
+
         const forecastData = data.forecast.forecastday.slice(0, 4).map((day, index) => ({
           date:
             index === 0 ? "Today" : new Date(day.date).toLocaleDateString("en-US", { month: "short", day: "numeric" }),
@@ -85,8 +104,13 @@ function App() {
               id="city-input"
               type="text"
               placeholder="Enter your city name"
-              value={city}
-              onChange={handleCityChange}
+              value={inputCity}
+              onChange={(e) => setInputCity(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  setCity(inputCity)
+                }
+              }}
               className="city-input"
             />
           </div>
@@ -108,8 +132,13 @@ function App() {
               id="city-input"
               type="text"
               placeholder="Enter city name"
-              value={city}
-              onChange={handleCityChange}
+              value={inputCity}
+              onChange={(e) => setInputCity(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  setCity(inputCity)
+                }
+              }}
               className="city-input"
             />
           </div>
@@ -131,8 +160,13 @@ function App() {
               id="city-input"
               type="text"
               placeholder="Enter city name"
-              value={city}
-              onChange={handleCityChange}
+              value={inputCity}
+              onChange={(e) => setInputCity(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  setCity(inputCity)
+                }
+              }}
               className="city-input"
             />
           </div>
@@ -154,8 +188,13 @@ function App() {
               id="city-input"
               type="text"
               placeholder="Enter city name"
-              value={city}
-              onChange={handleCityChange}
+              value={inputCity}
+              onChange={(e) => setInputCity(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  setCity(inputCity)
+                }
+              }}
               className="city-input"
             />
           </div>
@@ -167,11 +206,11 @@ function App() {
             currentHumidity={weather.currentHumidity}
             currentWindSpeed={weather.currentWindSpeed}
           />
-        </div>
+          </div>
 
         {/* Cột phải */}
         <div className="weather-column right-column">
-          <WeatherChart currentTemp={weather.currentTemp} chartData={weather.chartData} />
+          <WeatherChart data={weather} chartOption="humidity" />
           <div className="forecast-grid">
             {weather.forecast.map((item, index) => (
               <ForecastCard
