@@ -17,7 +17,7 @@ function App() {
 
 
   const API_KEY = import.meta.env.VITE_WEATHER_API_KEY
-  const BASE_URL = "http://api.weatherapi.com/v1/forecast.json"
+  const BASE_URL = "https://api.weatherapi.com/v1"
 
   useEffect(() => {
     const fetchWeatherData = async () => {
